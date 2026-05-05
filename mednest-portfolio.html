@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mednest — Safe Housing for NYC Frontline Workers</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0a1628;
+    --navy-mid: #132240;
+    --blue: #1a3a6e;
+    --accent: #3a7bd5;
+    --accent-light: #5b9cf6;
+    --cream: #f5f0e8;
+    --warm: #e8dfc8;
+    --gold: #c9a84c;
+    --white: #fefefe;
+    --text-muted: #8a9ab5;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--navy);
+    color: var(--cream);
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.4rem 4rem;
+    background: rgba(10,22,40,0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem; font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--cream);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .nav-logo .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-light); }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    color: var(--text-muted); text-decoration: none;
+    font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase;
+    transition: color 0.3s;
+  }
+  .nav-links a:hover { color: var(--cream); }
+
+  /* ─── HERO ─── */
+  .hero {
+    min-height: 100vh;
+    display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 8rem 4rem 4rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -20%; right: -10%;
+    width: 70vw; height: 120vh;
+    background: radial-gradient(ellipse at center, rgba(58,123,213,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-grid-overlay {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at 70% 50%, black 30%, transparent 70%);
+  }
+
+  .hero-left { position: relative; z-index: 2; }
+  .hero-tag {
+    display: inline-block;
+    border: 1px solid rgba(58,123,213,0.5);
+    color: var(--accent-light);
+    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    padding: 0.4rem 1rem; border-radius: 2rem;
+    margin-bottom: 2.5rem;
+    background: rgba(58,123,213,0.08);
+    animation: fadeUp 0.8s ease both;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3.2rem, 5vw, 5.5rem);
+    line-height: 1.05; font-weight: 900;
+    margin-bottom: 1.8rem;
+    animation: fadeUp 0.8s 0.1s ease both;
+  }
+  .hero-title em { font-style: italic; color: var(--accent-light); }
+  .hero-subtitle {
+    font-size: 1.05rem; line-height: 1.8;
+    color: var(--text-muted); max-width: 480px;
+    margin-bottom: 3rem;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+  .hero-cta {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+    animation: fadeUp 0.8s 0.3s ease both;
+  }
+  .btn-primary {
+    background: var(--accent); color: white;
+    padding: 0.9rem 2rem; border-radius: 0.3rem;
+    text-decoration: none; font-size: 0.9rem; font-weight: 500;
+    letter-spacing: 0.03em;
+    transition: all 0.3s;
+    border: 1px solid var(--accent);
+  }
+  .btn-primary:hover { background: var(--accent-light); border-color: var(--accent-light); transform: translateY(-2px); }
+  .btn-ghost {
+    background: transparent; color: var(--cream);
+    padding: 0.9rem 2rem; border-radius: 0.3rem;
+    text-decoration: none; font-size: 0.9rem;
+    border: 1px solid rgba(255,255,255,0.15);
+    transition: all 0.3s;
+  }
+  .btn-ghost:hover { border-color: rgba(255,255,255,0.4); transform: translateY(-2px); }
+
+  .hero-right {
+    position: relative; z-index: 2;
+    display: flex; justify-content: center; align-items: center;
+    animation: fadeUp 0.8s 0.2s ease both;
+  }
+
+  /* Phone mockup */
+  .phone-wrap {
+    position: relative;
+    transform: perspective(1000px) rotateY(-12deg) rotateX(3deg);
+    transition: transform 0.5s ease;
+  }
+  .phone-wrap:hover { transform: perspective(1000px) rotateY(-4deg) rotateX(1deg); }
+  .phone-frame {
+    width: 280px; height: 560px;
+    background: #111820;
+    border-radius: 40px;
+    border: 2px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.05),
+      0 40px 80px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+  .phone-notch {
+    position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+    width: 90px; height: 26px;
+    background: #111820; border-radius: 0 0 16px 16px;
+    z-index: 10;
+  }
+  .phone-screen {
+    width: 100%; height: 100%;
+    background: linear-gradient(160deg, #1a3a7a 0%, #0f2456 50%, #091c3d 100%);
+    padding: 36px 14px 14px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .ps-header { padding: 8px 0; }
+  .ps-greeting { font-size: 0.55rem; color: rgba(255,255,255,0.5); }
+  .ps-name { font-size: 1rem; font-weight: 700; color: white; font-family: 'DM Sans', sans-serif; }
+  .ps-badge {
+    display: inline-block;
+    background: rgba(91,156,246,0.25); color: #7fb8ff;
+    font-size: 0.45rem; padding: 2px 8px; border-radius: 10px; margin-top: 4px;
+    border: 1px solid rgba(91,156,246,0.3);
+  }
+  .ps-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  }
+  .ps-tile {
+    background: rgba(255,255,255,0.07);
+    border-radius: 10px; padding: 10px;
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+  }
+  .ps-tile-icon { font-size: 1rem; }
+  .ps-tile-label { font-size: 0.45rem; color: rgba(255,255,255,0.7); }
+  .ps-section-label { font-size: 0.45rem; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 0.1em; }
+  .ps-card {
+    background: rgba(255,255,255,0.09);
+    border-radius: 12px; padding: 10px;
+    border: 1px solid rgba(91,156,246,0.2);
+  }
+  .ps-card-title { font-size: 0.55rem; font-weight: 600; color: white; margin-bottom: 2px; }
+  .ps-card-sub { font-size: 0.42rem; color: rgba(255,255,255,0.4); margin-bottom: 6px; }
+  .ps-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+  .ps-tag {
+    background: rgba(58,123,213,0.25); color: #8bbdff;
+    font-size: 0.38rem; padding: 2px 5px; border-radius: 4px;
+  }
+  .ps-price { font-size: 0.65rem; font-weight: 700; color: #5be8a4; }
+  .ps-btn {
+    background: var(--accent); color: white;
+    text-align: center; border-radius: 8px;
+    font-size: 0.45rem; font-weight: 600; padding: 5px;
+    margin-top: 4px;
+  }
+  .ps-chat {
+    background: rgba(255,255,255,0.06);
+    border-radius: 8px; padding: 8px;
+    font-size: 0.42rem; color: rgba(255,255,255,0.5);
+    line-height: 1.4;
+  }
+  .ps-chat strong { color: rgba(255,255,255,0.8); }
+  .ps-nav {
+    display: flex; justify-content: space-around;
+    padding: 6px 0;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    margin-top: auto;
+  }
+  .ps-nav-item { font-size: 0.38rem; color: rgba(255,255,255,0.4); text-align: center; }
+  .ps-nav-item.active { color: white; }
+
+  /* Floating badges */
+  .float-badge {
+    position: absolute;
+    background: var(--navy-mid);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 0.75rem;
+    padding: 0.7rem 1rem;
+    font-size: 0.75rem;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    white-space: nowrap;
+    animation: float 4s ease-in-out infinite;
+  }
+  .float-badge:nth-child(2) { animation-delay: 1s; }
+  .float-badge:nth-child(3) { animation-delay: 2s; }
+  .float-badge-1 { top: 10%; right: -30px; }
+  .float-badge-2 { bottom: 25%; left: -40px; }
+  .float-badge .badge-num { font-weight: 700; color: var(--accent-light); font-size: 1rem; display: block; }
+  .float-badge .badge-label { color: var(--text-muted); font-size: 0.68rem; }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── SECTION BASE ─── */
+  section { padding: 7rem 4rem; }
+  .section-label {
+    font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent-light); margin-bottom: 1rem;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    font-weight: 700; line-height: 1.15;
+    margin-bottom: 1.5rem;
+  }
+  .section-body {
+    font-size: 1rem; line-height: 1.85;
+    color: var(--text-muted); max-width: 600px;
+  }
+  hr.divider {
+    border: none; border-top: 1px solid rgba(255,255,255,0.07);
+    margin: 0 4rem;
+  }
+
+  /* ─── PROBLEM ─── */
+  .problem { background: var(--navy); position: relative; }
+  .problem-inner { max-width: 1200px; margin: 0 auto; }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+
+  .loop-diagram {
+    display: flex; flex-direction: column; gap: 0;
+    position: relative;
+  }
+  .loop-step {
+    display: flex; align-items: flex-start; gap: 1.5rem;
+    padding: 1.8rem 0;
+    border-left: 2px solid rgba(255,255,255,0.08);
+    padding-left: 2rem;
+    position: relative;
+    transition: all 0.3s;
+  }
+  .loop-step:hover { border-left-color: var(--accent); }
+  .loop-step-num {
+    position: absolute; left: -14px; top: 1.8rem;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--navy-mid);
+    border: 2px solid rgba(255,255,255,0.12);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.7rem; font-weight: 700; color: var(--text-muted);
+    transition: all 0.3s;
+  }
+  .loop-step:hover .loop-step-num { background: var(--accent); border-color: var(--accent); color: white; }
+  .loop-step-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 2px; }
+  .loop-step-text h4 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--cream); }
+  .loop-step-text p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+  .quote-block {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1.5rem 1.8rem;
+    margin-top: 2rem;
+    font-size: 0.9rem; font-style: italic; line-height: 1.7;
+    color: var(--cream);
+  }
+  .quote-source { font-style: normal; font-size: 0.75rem; color: var(--text-muted); margin-top: 0.6rem; }
+
+  /* ─── SOLUTION ─── */
+  .solution { background: var(--navy-mid); position: relative; overflow: hidden; }
+  .solution::before {
+    content: '';
+    position: absolute; bottom: -30%; right: -20%;
+    width: 60vw; height: 80vh;
+    background: radial-gradient(ellipse, rgba(58,123,213,0.08) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .solution-inner { max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+
+  .features-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5px;
+    margin-top: 4rem;
+    background: rgba(255,255,255,0.06);
+    border-radius: 1rem;
+    overflow: hidden;
+  }
+  .feature-card {
+    background: var(--navy-mid);
+    padding: 2.5rem 2rem;
+    transition: background 0.3s;
+    position: relative;
+  }
+  .feature-card:hover { background: rgba(26,58,110,0.8); }
+  .feature-icon {
+    width: 48px; height: 48px;
+    background: rgba(58,123,213,0.15);
+    border: 1px solid rgba(58,123,213,0.25);
+    border-radius: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem; margin-bottom: 1.5rem;
+  }
+  .feature-card h3 { font-size: 1rem; font-weight: 500; margin-bottom: 0.6rem; color: var(--cream); }
+  .feature-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.7; }
+
+  /* ─── COMPARISON ─── */
+  .comparison { background: var(--navy); }
+  .comparison-inner { max-width: 1100px; margin: 0 auto; }
+  .comp-table {
+    margin-top: 3.5rem;
+    border-radius: 1rem; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.07);
+  }
+  .comp-row {
+    display: grid; grid-template-columns: 220px 1fr 1fr 1fr;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .comp-row:last-child { border-bottom: none; }
+  .comp-row.header { background: rgba(58,123,213,0.12); }
+  .comp-cell {
+    padding: 1.1rem 1.5rem;
+    font-size: 0.85rem;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center;
+  }
+  .comp-cell:last-child { border-right: none; }
+  .comp-cell.cat { color: var(--text-muted); font-size: 0.8rem; }
+  .comp-cell.mednest { color: var(--cream); font-weight: 400; }
+  .comp-cell.other { color: rgba(255,255,255,0.3); font-size: 0.8rem; }
+  .comp-cell.header { font-size: 0.75rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); font-weight: 500; }
+  .comp-cell.header.mednest-h { color: var(--accent-light); font-weight: 600; }
+  .check { color: #5be8a4; margin-right: 0.5rem; }
+  .cross { color: rgba(255,255,255,0.2); margin-right: 0.5rem; }
+
+  /* ─── FAIRNESS ─── */
+  .fairness { background: var(--navy-mid); }
+  .fairness-inner { max-width: 1200px; margin: 0 auto; }
+  .fairness-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px;
+    margin-top: 3.5rem;
+    background: rgba(255,255,255,0.05);
+    border-radius: 0.75rem; overflow: hidden;
+  }
+  .fairness-card {
+    background: var(--navy-mid);
+    padding: 2rem 1.5rem;
+    transition: background 0.3s;
+  }
+  .fairness-card:hover { background: rgba(26,58,110,0.7); }
+  .fairness-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem; font-weight: 900;
+    color: rgba(58,123,213,0.25);
+    line-height: 1; margin-bottom: 0.8rem;
+  }
+  .fairness-card h4 { font-size: 0.85rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--cream); }
+  .fairness-card p { font-size: 0.78rem; color: var(--text-muted); line-height: 1.6; }
+
+  /* ─── STAKEHOLDERS ─── */
+  .stakeholders { background: var(--navy); }
+  .stakeholders-inner { max-width: 1200px; margin: 0 auto; }
+  .stakeholder-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem;
+    margin-top: 3.5rem;
+  }
+  .stakeholder-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 0.75rem; padding: 2rem 1.5rem;
+    transition: all 0.3s;
+  }
+  .stakeholder-card:hover {
+    background: rgba(58,123,213,0.08);
+    border-color: rgba(58,123,213,0.25);
+    transform: translateY(-4px);
+  }
+  .stakeholder-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+  .stakeholder-card h3 { font-size: 0.95rem; font-weight: 500; margin-bottom: 0.4rem; color: var(--cream); }
+  .stakeholder-card p { font-size: 0.82rem; color: var(--text-muted); line-height: 1.65; }
+
+  /* ─── TEAM ─── */
+  .team { background: var(--navy-mid); text-align: center; }
+  .team-inner { max-width: 800px; margin: 0 auto; }
+  .team-names {
+    display: flex; justify-content: center; gap: 2.5rem; flex-wrap: wrap;
+    margin-top: 3rem;
+  }
+  .team-member {
+    display: flex; flex-direction: column; align-items: center; gap: 0.6rem;
+  }
+  .team-avatar {
+    width: 64px; height: 64px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(58,123,213,0.3), rgba(26,58,110,0.5));
+    border: 2px solid rgba(58,123,213,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--accent-light);
+  }
+  .team-name { font-size: 0.9rem; color: var(--cream); }
+  .team-course {
+    font-size: 0.75rem; color: var(--text-muted);
+    margin-top: 2.5rem; letter-spacing: 0.05em;
+  }
+
+  /* ─── PITCH ─── */
+  .pitch {
+    background: var(--navy);
+    position: relative; overflow: hidden;
+  }
+  .pitch::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 50%, rgba(58,123,213,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .pitch-inner {
+    max-width: 800px; margin: 0 auto; text-align: center;
+    position: relative; z-index: 1;
+  }
+  .pitch-quote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 2.8vw, 2.4rem);
+    line-height: 1.45; font-weight: 400;
+    font-style: italic; color: var(--cream);
+    margin-bottom: 3rem;
+  }
+  .pitch-quote em { color: var(--accent-light); font-style: normal; }
+  .pitch-tagline {
+    font-size: 0.9rem; color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+
+  /* ─── FOOTER ─── */
+  footer {
+    background: var(--navy-mid);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 3rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem; font-weight: 700;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .footer-right { font-size: 0.8rem; color: var(--text-muted); }
+
+  /* ─── SCROLL REVEAL ─── */
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    nav { padding: 1.2rem 2rem; }
+    .hero { grid-template-columns: 1fr; padding: 7rem 2rem 4rem; gap: 3rem; }
+    .hero-right { display: none; }
+    section { padding: 5rem 2rem; }
+    hr.divider { margin: 0 2rem; }
+    .problem-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .fairness-grid { grid-template-columns: 1fr 1fr; }
+    .stakeholder-grid { grid-template-columns: 1fr 1fr; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+    .comp-row { grid-template-columns: 140px 1fr 1fr 1fr; }
+    .comp-cell { padding: 0.9rem 1rem; font-size: 0.78rem; }
+  }
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .features-grid { grid-template-columns: 1fr; }
+    .fairness-grid { grid-template-columns: 1fr 1fr; }
+    .stakeholder-grid { grid-template-columns: 1fr; }
+    .comp-row { grid-template-columns: 100px 1fr 1fr; }
+    .comp-cell.other:last-child { display: none; }
+    .comp-cell.header:last-child { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <div class="dot"></div>
+    Mednest
+  </div>
+  <ul class="nav-links">
+    <li><a href="#problem">Problem</a></li>
+    <li><a href="#solution">Solution</a></li>
+    <li><a href="#comparison">Comparison</a></li>
+    <li><a href="#fairness">Fairness</a></li>
+    <li><a href="#team">Team</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-left">
+    <div class="hero-tag">Human-Centered Design &amp; Innovation · Team 6</div>
+    <h1 class="hero-title">
+      Safe housing for<br>
+      <em>frontline workers,</em><br>
+      instantly matched.
+    </h1>
+    <p class="hero-subtitle">
+      During a NYC biohazard disaster, exhausted healthcare workers face a loop they cannot break: a high-risk shift, a crowded commute, and a home where true isolation is impossible. Mednest closes that gap.
+    </p>
+    <div class="hero-cta">
+      <a href="#solution" class="btn-primary">Explore the Solution</a>
+      <a href="#problem" class="btn-ghost">The Problem</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="phone-wrap">
+      <div class="float-badge float-badge-1">
+        <span class="badge-num">4</span>
+        <span class="badge-label">verified matches nearby</span>
+      </div>
+      <div class="float-badge float-badge-2">
+        <span class="badge-num">&lt;2 min</span>
+        <span class="badge-label">from shift to booking</span>
+      </div>
+      <div class="phone-frame">
+        <div class="phone-notch"></div>
+        <div class="phone-screen">
+          <div class="ps-header">
+            <div class="ps-greeting">Good evening,</div>
+            <div class="ps-name">Maria Chen</div>
+            <div class="ps-badge">NYP Columbia · ICU Nurse</div>
+          </div>
+          <div class="ps-grid">
+            <div class="ps-tile">
+              <div class="ps-tile-icon">📋</div>
+              <div class="ps-tile-label">Apply</div>
+            </div>
+            <div class="ps-tile">
+              <div class="ps-tile-icon">📍</div>
+              <div class="ps-tile-label">Find housing</div>
+            </div>
+            <div class="ps-tile">
+              <div class="ps-tile-icon">💬</div>
+              <div class="ps-tile-label">Group chats</div>
+            </div>
+            <div class="ps-tile">
+              <div class="ps-tile-icon">👥</div>
+              <div class="ps-tile-label">Contacts</div>
+            </div>
+          </div>
+          <div class="ps-section-label">Top match for you</div>
+          <div class="ps-card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start">
+              <div class="ps-card-title">Marriott Residence Inn — UWS</div>
+              <div class="ps-price">$0/night</div>
+            </div>
+            <div class="ps-card-sub">0.4 mi · NYP Columbia</div>
+            <div class="ps-tags">
+              <span class="ps-tag">Daily sanitation</span>
+              <span class="ps-tag">Testing on-site</span>
+              <span class="ps-tag">Meals incl.</span>
+            </div>
+            <div class="ps-btn">View details</div>
+          </div>
+          <div class="ps-section-label">Recent chat</div>
+          <div class="ps-chat">
+            <strong>Marriott UWS — Floor 4</strong><br>
+            Priya S: "Hey everyone — housekeeping said they'll do extra sanitization tomorrow morning…"
+          </div>
+          <div class="ps-nav">
+            <div class="ps-nav-item active">🏠 Home</div>
+            <div class="ps-nav-item">📍 Housing</div>
+            <div class="ps-nav-item">💬 Chats</div>
+            <div class="ps-nav-item">📋 Apply</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- PROBLEM -->
+<section class="problem" id="problem">
+  <div class="problem-inner">
+    <div class="problem-grid">
+      <div class="reveal">
+        <div class="section-label">The Problem</div>
+        <h2 class="section-title">A loop with<br>no exit.</h2>
+        <p class="section-body">
+          Frontline workers move daily between three high-risk environments with no safe step in between. The result is chronic hypervigilance — and a fear that follows them home.
+        </p>
+        <div class="quote-block">
+          "There were nights I'd come home and just stand at the door, not wanting to touch anything."
+          <div class="quote-source">— ICU Nurse, COVID unit</div>
+        </div>
+        <div class="quote-block" style="margin-top:1rem; border-left-color: var(--gold);">
+          "I just wanted a clear routine that told me it was safe."
+          <div class="quote-source">— Family partner</div>
+        </div>
+      </div>
+      <div class="loop-diagram reveal reveal-delay-2">
+        <div class="loop-step">
+          <div class="loop-step-num">1</div>
+          <div class="loop-step-icon">🏥</div>
+          <div class="loop-step-text">
+            <h4>High-risk hospital shift</h4>
+            <p>12-hour shifts in active-exposure units. Full PPE required. Dominant infection risk.</p>
+          </div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-step-num">2</div>
+          <div class="loop-step-icon">🚇</div>
+          <div class="loop-step-text">
+            <h4>Crowded MTA commute</h4>
+            <p>Packed subway cars with no isolation. Where psychological load accumulates.</p>
+          </div>
+        </div>
+        <div class="loop-step">
+          <div class="loop-step-num">3</div>
+          <div class="loop-step-icon">🏠</div>
+          <div class="loop-step-text">
+            <h4>Small shared apartment</h4>
+            <p>Partners, children, roommates. No physical separation. Fear of infecting family is the top concern.</p>
+          </div>
+        </div>
+        <div class="loop-step" style="border-left-color: rgba(58,123,213,0.4);">
+          <div class="loop-step-num" style="border-color:rgba(58,123,213,0.4); color:var(--accent-light);">✗</div>
+          <div class="loop-step-icon">📋</div>
+          <div class="loop-step-text">
+            <h4>Existing programs failed</h4>
+            <p>Scattered hotel spreadsheets, inconsistent cleaning, and exhausting applications that workers couldn't complete.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SOLUTION -->
+<section class="solution" id="solution">
+  <div class="solution-inner">
+    <div class="reveal">
+      <div class="section-label">The Solution</div>
+      <h2 class="section-title">One application.<br>One verified match.<br>One clinical-grade stay.</h2>
+      <p class="section-body">
+        Mednest replaces administrative chaos with clinical transparency — a mobile-first platform that aggregates hotel, dormitory, and corporate housing into a single worker-facing experience, governed by uniform safety standards.
+      </p>
+    </div>
+    <div class="features-grid reveal reveal-delay-1">
+      <div class="feature-card">
+        <div class="feature-icon">🔐</div>
+        <h3>Hospital-Verified Identity</h3>
+        <p>A single form pulls credentials from participating hospital HR systems. Workers never re-enter the same information twice.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📍</div>
+        <h3>Proximity-Based Matching</h3>
+        <p>Enter your hospital; Mednest returns the nearest verified safe-stay options within minutes — no manual search, no uneven availability.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🧪</div>
+        <h3>Standardized Clinical Metrics</h3>
+        <p>Every option displays verified attributes: COVID testing cadence, HEPA filtration, daily deep cleaning, UV-C treatment, PPE disposal, and quiet hours.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>Community Without Exposure</h3>
+        <p>Optional group chats by building and floor let workers in the same space connect — reducing isolation without physical contact.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🚌</div>
+        <h3>Clean Commute Shuttle</h3>
+        <p>Outer-borough and NJ inventory paired with a dedicated sanitized shuttle synchronized to hospital shift changes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🏛️</div>
+        <h3>Always-Ready Infrastructure</h3>
+        <p>Block-lease agreements and certifications stay warm between disasters — reactivatable in 72 hours, not months.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- COMPARISON -->
+<section class="comparison" id="comparison">
+  <div class="comparison-inner">
+    <div class="reveal">
+      <div class="section-label">Competitive Landscape</div>
+      <h2 class="section-title">Mednest vs.<br>existing alternatives.</h2>
+      <p class="section-body">
+        Airbnb Frontline Stays proved supply exists. Hospitality for Hope proved hotel industry participation. Neither delivered a standardized, worker-first experience with clinical metrics, proximity matching, community support, and an integrated transit bridge.
+      </p>
+    </div>
+    <div class="comp-table reveal reveal-delay-1">
+      <div class="comp-row header">
+        <div class="comp-cell header"></div>
+        <div class="comp-cell header mednest-h">Mednest</div>
+        <div class="comp-cell header">Airbnb Frontline Stays</div>
+        <div class="comp-cell header">Hospitality for Hope</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Booking &amp; Matching</div>
+        <div class="comp-cell mednest"><span class="check">✓</span>Universal app, instant algorithmic match</div>
+        <div class="comp-cell other"><span class="cross">—</span>General UI, manual search</div>
+        <div class="comp-cell other"><span class="cross">—</span>Industry database, no booking</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Clinical Safety Metrics</div>
+        <div class="comp-cell mednest"><span class="check">✓</span>Testing, HEPA, UV-C, PPE enforced</div>
+        <div class="comp-cell other"><span class="cross">—</span>Host claims only</div>
+        <div class="comp-cell other"><span class="cross">—</span>Varies hotel-to-hotel</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Community Support</div>
+        <div class="comp-cell mednest"><span class="check">✓</span>Group chats by building &amp; floor</div>
+        <div class="comp-cell other"><span class="cross">—</span>None</div>
+        <div class="comp-cell other"><span class="cross">—</span>None</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Transit Integration</div>
+        <div class="comp-cell mednest"><span class="check">✓</span>Clean Commute shuttle integrated</div>
+        <div class="comp-cell other"><span class="cross">—</span>None</div>
+        <div class="comp-cell other"><span class="cross">—</span>None</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-cell cat">Cost Control</div>
+        <div class="comp-cell mednest"><span class="check">✓</span>Block-leased dorms lower cost</div>
+        <div class="comp-cell other"><span class="cross">—</span>Subject to host pricing</div>
+        <div class="comp-cell other"><span class="cross">—</span>Market-rate industry pricing</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FAIRNESS -->
+<section class="fairness" id="fairness">
+  <div class="fairness-inner">
+    <div class="reveal">
+      <div class="section-label">Fairness by Design</div>
+      <h2 class="section-title">Who gets in,<br>and on what terms.</h2>
+      <p class="section-body">
+        A disaster-response product that serves only the most visible workers repeats the inequity of the disaster itself. Mednest's fairness principles are built into the matching system, not added as policy language.
+      </p>
+    </div>
+    <div class="fairness-grid reveal reveal-delay-1">
+      <div class="fairness-card">
+        <div class="fairness-num">01</div>
+        <h4>Role Inclusivity</h4>
+        <p>Every credentialed frontline role — nurses, orderlies, EVS, food service — is a first-class user, not an afterthought.</p>
+      </div>
+      <div class="fairness-card">
+        <div class="fairness-num">02</div>
+        <h4>Shift-Aware Matching</h4>
+        <p>Night-shift workers get rooms and shuttles that serve their actual schedule, not a daytime default.</p>
+      </div>
+      <div class="fairness-card">
+        <div class="fairness-num">03</div>
+        <h4>Geographic Fairness</h4>
+        <p>The Clean Commute shuttle ensures workers from Queens, the Bronx, Staten Island, and NJ have equal access.</p>
+      </div>
+      <div class="fairness-card">
+        <div class="fairness-num">04</div>
+        <h4>Language &amp; Accessibility</h4>
+        <p>Available in the dominant languages of the NYC healthcare workforce from launch, not added later.</p>
+      </div>
+      <div class="fairness-card">
+        <div class="fairness-num">05</div>
+        <h4>Scarcity Allocation</h4>
+        <p>When demand exceeds supply, allocation uses transparent exposure risk and household vulnerability — never seniority or hospital prestige.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- STAKEHOLDERS -->
+<section class="stakeholders">
+  <div class="stakeholders-inner">
+    <div class="reveal">
+      <div class="section-label">Ecosystem</div>
+      <h2 class="section-title">The network that<br>makes it work.</h2>
+      <p class="section-body">
+        Mednest is a coordination layer. The network around it determines whether the product succeeds or collapses under surge.
+      </p>
+    </div>
+    <div class="stakeholder-grid reveal reveal-delay-1">
+      <div class="stakeholder-card">
+        <div class="stakeholder-icon">🏥</div>
+        <h3>Hospitals</h3>
+        <p>HR systems verify credentials. Employee-benefits programs subsidize stays. Infection-control teams co-author clinical standards.</p>
+      </div>
+      <div class="stakeholder-card">
+        <div class="stakeholder-icon">🏨</div>
+        <h3>Housing Supply</h3>
+        <p>Hotel chains provide elastic urban inventory. Universities provide block-leased dorms. Corporate housing handles multi-week surges.</p>
+      </div>
+      <div class="stakeholder-card">
+        <div class="stakeholder-icon">🏛️</div>
+        <h3>Public Sector</h3>
+        <p>NYC Emergency Management activates the network. FEMA and public-health grants reimburse directly so workers never see a bill.</p>
+      </div>
+      <div class="stakeholder-card">
+        <div class="stakeholder-icon">🚌</div>
+        <h3>Logistics &amp; Services</h3>
+        <p>Contracted transit fleets run Clean Commute routes. Food delivery, tele-therapy, and rapid testing are integrated via APIs — not rebuilt in-house.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ELEVATOR PITCH -->
+<section class="pitch">
+  <div class="pitch-inner reveal">
+    <div class="section-label" style="text-align:center;">Elevator Pitch</div>
+    <p class="pitch-quote">
+      "Exhausted NYC frontline workers fear bringing infection home, yet finding safe housing means navigating scattered, repetitive applications. Mednest replaces that chaos with <em>one universal application</em> — instantly matched, clinically verified, community-supported."
+    </p>
+    <div class="pitch-tagline">Those who protect us deserve protection, too.</div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TEAM -->
+<section class="team" id="team">
+  <div class="team-inner">
+    <div class="reveal">
+      <div class="section-label" style="text-align:center;">The Team</div>
+      <h2 class="section-title" style="text-align:center;">Section 2 · Team 6</h2>
+    </div>
+    <div class="team-names reveal reveal-delay-1">
+      <div class="team-member">
+        <div class="team-avatar">V</div>
+        <div class="team-name">Vince</div>
+      </div>
+      <div class="team-member">
+        <div class="team-avatar">E</div>
+        <div class="team-name">Effie</div>
+      </div>
+      <div class="team-member">
+        <div class="team-avatar">E</div>
+        <div class="team-name">Emma</div>
+      </div>
+      <div class="team-member">
+        <div class="team-avatar">S</div>
+        <div class="team-name">Sriya</div>
+      </div>
+    </div>
+    <p class="team-course reveal reveal-delay-2">Human-Centered Design &amp; Innovation</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">
+    <div class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--accent-light)"></div>
+    Mednest
+  </div>
+  <div class="footer-right">Safe, subsidized housing for NYC frontline workers — instantly matched.</div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
